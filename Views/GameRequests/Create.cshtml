@@ -1,0 +1,80 @@
+﻿@model GameForum.Models.ViewModels.GameRequestViewModel
+@{
+    ViewData["Title"] = "Create Game Request";
+}
+
+<head>
+    <link rel="stylesheet" href="~/css/game_request.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+</head>
+
+<div class="game-request-container">
+    <div class="game-request-header">
+        <h1 class="game-request-title"><i class="fas fa-gamepad"></i> Create a New Game Request</h1>
+    </div>
+
+    <div class="game-request-content">
+        <div class="game-request-main">
+            <form asp-action="Create" method="post">
+                <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+
+                <div class="form-group">
+                    <label asp-for="Title">Game Title</label>
+                    <input asp-for="Title" class="form-control" placeholder="Enter game title..." />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+
+                <div class="form-group form-description">
+                    <label asp-for="Description">Description</label>
+                    <textarea asp-for="Description" class="form-control" rows="6"
+                              placeholder="Describe the game you're requesting..."></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="ImageUrl">Image URL</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-image"></i></span>
+                        <input asp-for="ImageUrl" class="form-control" placeholder="https://example.com/image.jpg" />
+                    </div>
+                    <span asp-validation-for="ImageUrl" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label>Categories</label>
+                    <div class="categories-card">
+                        <div class="categories-container">
+                            @foreach (var category in Model.AvailableCategories)
+                            {
+                                <div class="category-item">
+                                    <input class="category-checkbox"
+                                           type="checkbox"
+                                           name="SelectedCategories"
+                                           value="@category.Value"
+                                           id="cat_@category.Value" />
+                                    <label for="cat_@category.Value">
+                                        @category.Text
+                                    </label>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <span asp-validation-for="SelectedCategories" class="text-danger"></span>
+                    <div class="form-text">Select all categories that apply to your game request</div>
+                </div>
+
+                <div class="actions-container">
+                    <button type="submit" class="submit-btn">
+                        <i class="fas fa-paper-plane"></i>Submit Request
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -1,0 +1,229 @@
+﻿:root {
+    --primary-color: #7b2cbf;
+    --primary-light: #9d4edd;
+    --secondary-color: #48bfe3;
+    --dark-color: #1a1a2e;
+    --light-color: #f8f9fa;
+    --success-color: #06d6a0;
+    --warning-color: #ffb703;
+    --danger-color: #ef476f;
+    --border-radius: 8px;
+    --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    --transition: all 0.3s ease;
+}
+
+/* Main Container */
+.home-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Section Title */
+.header-section {
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.explorer-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+/* Grid for Top Games */
+.home-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 4rem;
+    margin-bottom: 3rem;
+    justify-content: center;
+    max-width: 1500px;
+    margin-left: auto;
+    margin-right: auto;
+    background: linear-gradient(to bottom right, #e6e6e6 50%, #f8c8dc);
+    padding-left: 400px;
+    padding-right: 400px;
+}
+
+@media (min-width: 768px) {
+    .home-grid {
+        grid-template-columns: repeat(3, minmax(240px, 280px)); 
+    }
+}
+
+.game-card {
+    height: 100%;
+    background-color: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-shadow);
+    overflow: hidden;
+    transition: var(--transition);
+    display: flex;
+    flex-direction: column;
+}
+.game-card-inner {
+    display: flex;
+    flex-direction: column;
+
+    height: 100%;
+    width: 100%;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: white;
+    transition: var(--transition);
+}
+    .game-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    }
+        .game-card-inner {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+.game-image-container {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+
+
+    position: relative;
+    height: 300px;
+    background-color: #f0f0f0;
+    overflow: hidden;
+}
+
+.game-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    transition: var(--transition);
+}
+
+.game-card:hover .game-image {
+    transform: scale(1.23);
+}
+
+.game-info {
+    padding: 1rem;
+    text-align: center;
+}
+
+.game-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--dark-color);
+    transition: var(--transition);
+}
+
+.game-card:hover .game-title {
+    color: var(--primary-color);
+}
+
+.game-badges {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.rating-badge {
+    background-color: rgba(26, 26, 46, 0.8);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 30px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+    .rating-badge i {
+        color: #ffdd00;
+    }
+
+.header-section.left {
+    text-align: left;
+}
+
+.game-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: var(--transition);
+}
+
+.game-card:hover .game-overlay {
+    opacity: 1;
+}
+
+.details-btn {
+    background-color: #BF40BF;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 0.9rem;
+    transition: var(--transition);
+    border-radius: 20px;
+}
+
+    .details-btn:hover {
+        background-color: #800080;
+        transform: scale(1.05);
+    }
+
+.gradient-text {
+    background: linear-gradient(to right, #7b2cbf, #9d4edd);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+}
+
+.explorer-title i {
+    margin-right: 10px;
+    color: #ffb703;
+}
+
+.section-wrapper {
+    margin-bottom: 3rem;
+}
+
+.section-subtitle {
+    font-size: 1rem;
+    color: #a1a1a1;
+    margin-top: 0.5rem;
+    font-weight: 400;
+    text-align: center;
+}
+
+.header-section.left .section-subtitle {
+    text-align: left;
+}
+
+.section-divider {
+    height: 3px;
+    background: linear-gradient(to right, #9d4edd, #7b2cbf);
+    border-radius: 5px;
+    margin: 4rem 0 3rem;
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    opacity: 0.6;
+}
+

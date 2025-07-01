@@ -1,0 +1,107 @@
+﻿.admin-panel {
+    padding: 20px;
+    background: #111;
+    color: #eee;
+    font-family: 'Courier New', monospace;
+    max-width: 1200px;
+    margin: 0 auto; /* Centers the panel horizontally */
+    width: 100%; /* Ensures it can shrink */
+    box-sizing: border-box; /* Prevent padding from breaking max-width */
+}
+
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: black;
+}
+
+.normie{
+    margin-bottom: 15px;
+}
+
+
+h1 {
+    font-size: 32px;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #333;
+    padding-bottom: 10px;
+}
+
+.request-row {
+    display: flex;
+    align-items: flex-start;
+    border-bottom: 1px solid #333;
+    padding: 0px 0;
+    gap: 20px;
+}
+
+.request-description {
+    flex: 2;
+}
+
+    .request-description h2 {
+        margin: 0 0 5px;
+    }
+
+    .request-description p {
+        margin: 0;
+        font-size: 14px;
+    }
+
+.request-status-actions {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.status-label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.btn {
+    padding: 6px 12px;
+    border: none;
+    background-color: #222;
+    color: #eee;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+    .btn.accept {
+        background-color: #0f0;
+        color: #000;
+    }
+
+    .btn.reject {
+        background-color: #f00;
+        color: #000;
+        margin-bottom: 20px;
+    }
+
+    .btn:hover {
+        opacity: 0.85;
+    }
+
+.request-image {
+    flex-shrink: 0;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: scale(0.6); /* Adjust scale as needed */
+    transform-origin: top right;
+}
+
+
+    .request-image img {
+        width: 100%;
+        height: auto;
+        display: block;
+        border-radius: 4px;
+    }

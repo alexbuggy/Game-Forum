@@ -1,0 +1,124 @@
+﻿@model Dictionary<GameCategory, List<Game>>
+@using GameForum.Models
+@using GameForum.Models.Enums
+@{
+    ViewData["Title"] = "Explore Games";
+}
+
+<head>
+    <link rel="stylesheet" href="~/css/explore.css">
+</head>
+<div class="game-explorer-container">
+    <div class="header-section">
+        <h1 class="explorer-title"><i class="fas fa-gamepad"></i> Explore Games</h1>
+    </div>
+
+    @foreach (var categoryGroup in Model)
+    {
+        var category = categoryGroup.Key;
+        var games = categoryGroup.Value;
+        <div class="category-section" id="category-@category.ToString().ToLower()">
+            <div class="category-header">
+                <div class="category-title-wrapper">
+                    <h2 class="category-title">@category</h2>
+                    <span class="game-count">@games.Count() games</span>
+                </div>
+                <div class="category-controls">
+                    <select class="sort-select" data-category="@category" onchange="sortGames('@category')">
+                        <option class="fw-bold" value="rating">Sort by Rating</option>
+                        <option class="fw-bold" value="name">Sort Alphabetically</option>
+                        <option class="fw-bold" value="reviews">Sort by Reviews</option>
+                    </select>
+                    <button class="category-expand-btn" onclick="toggleCategory('@category')">
+                        <i class="fas fa-chevron-up"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="games-container grid-view" id="games-@category">
+                @foreach (var game in games)
+                {
+                    <div class="game-card" data-rating="@game.AverageRating" data-name="@game.Title" data-reviews="@(game.Reviews?.Count() ?? 0)">
+                        <div class="game-card-inner">
+                            <div class="game-image-container">
+                                <img src="@(string.IsNullOrEmpty(game.ImageUrl) ? "/images/game-placeholder.jpg" : game.ImageUrl)" alt="@game.Title" class="game-image" />
+                                <div class="game-overlay">
+                                    <a href="/Games/Details/@game.Id" class="details-btn">Go to game</a>
+                                </div>
+                                <div class="game-badges">
+                                    <span class="rating-badge">
+                                        @game.AverageRating.ToString("0.0") <i class="fas fa-star"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="game-info">
+                                <h3 class="game-title">@game.Title</h3>
+@*                                 <p class="game-description">@(game.Description != null ? (game.Description.Length > 100 ? game.Description.Substring(0, 100) + "..." : game.Description) : "No description available.")</p>
+ *@                                <div class="game-meta">
+                                    <span class="review-count">
+                                        <i class="fas fa-comment"></i> @(game.Reviews?.Count() ?? 0) reviews
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Load Font Awesome
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css';
+            document.head.appendChild(link);
+
+            // Auto-sort each category on load
+            document.querySelectorAll('.sort-select').forEach(select => {
+                sortGames(select.dataset.category);
+            });
+        });
+
+        function sortGames(category) {
+            const container = document.getElementById(`games-${category}`);
+            const cards = Array.from(container.getElementsByClassName("game-card"));
+            const sortBy = document.querySelector(`.sort-select[data-category='${category}']`).value;
+
+            cards.sort((a, b) => {
+                const ratingA = parseFloat(a.dataset.rating) || 0;
+                const ratingB = parseFloat(b.dataset.rating) || 0;
+                const nameA = a.dataset.name.toLowerCase();
+                const nameB = b.dataset.name.toLowerCase();
+                const reviewsA = parseInt(a.dataset.reviews) || 0;
+                const reviewsB = parseInt(b.dataset.reviews) || 0;
+
+                switch (sortBy) {
+                    case "rating":
+                        return ratingB - ratingA;
+                    case "name":
+                        return nameA.localeCompare(nameB);
+                    case "reviews":
+                        return reviewsB - reviewsA;
+                    default:
+                        return 0;
+                }
+            });
+
+            // Reorder cards in DOM
+            cards.forEach(card => container.appendChild(card));
+        }
+
+        function toggleCategory(category) {
+            const container = document.getElementById(`games-${category}`);
+            const icon = document.querySelector(`#category-${category.toLowerCase()} .category-expand-btn i`);
+
+            const isHidden = container.style.display === 'none';
+            container.style.display = isHidden ? '' : 'none';
+            icon.className = isHidden ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
+        }
+    </script>
+}

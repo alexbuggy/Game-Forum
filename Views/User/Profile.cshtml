@@ -1,0 +1,383 @@
+﻿@model GameForum.Models.User
+
+@{
+    ViewData["Title"] = "Profile";
+}
+
+<head>
+    <link rel="stylesheet" href="~/css/profile.css">
+    <link rel="stylesheet" href="~/css/game_details.css">
+</head>
+
+<div class="profile-container">
+    <div class="profile-header">
+        <h1 class="profile-title"><i class="fas fa-user-circle"></i> @Model.UserName</h1>
+        @if (ViewData["IsPublicProfile"] != null && (bool)ViewData["IsPublicProfile"] == false)
+        {
+            <button id="edit-profile-btn" class="edit-profile-btn" onclick="toggleEditMode()">
+                <i class="fas fa-edit"></i> Edit Profile
+            </button>
+        }
+    </div>
+
+    <div class="profile-content">
+        <div class="profile-sidebar">
+            <div class="profile-image-container">
+                <img src="@(string.IsNullOrEmpty(Model.ProfileImg) ? "/images/default-profile.jpg" : Model.ProfileImg)"
+                     alt="Profile Picture" class="profile-image" />
+            </div>
+            <div id="profile-stats" class="profile-stats">
+                <div class="stat-item">
+                    <i class="fas fa-star"></i>
+                    <span>Reviews: @(Model.Reviews?.Count() ?? 0)</span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-heart"></i>
+                    <span>Favorites: @(Model.FavoriteGames?.Count() ?? 0)</span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-comments"></i>
+                    <span>Discussions: @(Model.DiscussionPosts?.Count() ?? 0)</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-main">
+            <div id="profile-display" class="profile-info-display">
+                <div class="info-section">
+                    <h3>Username</h3>
+                    <p class="user-info">@Model.UserName</p>
+                </div>
+                <div class="info-section">
+                    <h3>About Me</h3>
+                    <p class="user-info">@(string.IsNullOrEmpty(Model.AboutMe) ? "No description provided." : Model.AboutMe)</p>
+                </div>
+            </div>
+
+            <form id="profile-edit-form" class="profile-edit-form" asp-action="UpdateProfile" method="post" style="display: none;">
+                <div class="form-group">
+                    <label asp-for="UserName" class="form-label">Username</label>
+                    <input asp-for="UserName" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label asp-for="ProfileImg" class="form-label">Profile Picture URL</label>
+                    <input asp-for="ProfileImg" class="form-control" placeholder="Enter image URL" />
+                    <small class="form-text text-muted">Enter a valid image URL for your profile picture.</small>
+                </div>
+                <div class="form-group">
+                    <label asp-for="AboutMe" class="form-label">About Me</label>
+                    <textarea asp-for="AboutMe" class="form-control" rows="4"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn" onclick="toggleEditMode()">Cancel</button>
+                    <button type="submit" class="save-btn">Save Changes</button>
+                </div>
+            </form>
+
+            <div class="tabs-container">
+                <ul class="nav-tabs" id="profileTabs" role="tablist">
+                    <li class="tab-item active" role="presentation" onclick="switchTab('reviews')">
+                        <button id="reviews-tab" class="tab-link">
+                            <i class="fas fa-comment"></i> Reviews
+                        </button>
+                    </li>
+                    <li class="tab-item" role="presentation" onclick="switchTab('discussions')">
+                        <button id="discussions-tab" class="tab-link">
+                            <i class="fas fa-comments"></i> Discussions
+                        </button>
+                    </li>
+                    <li class="tab-item" role="presentation" onclick="switchTab('favorites')">
+                        <button id="favorites-tab" class="tab-link">
+                            <i class="fas fa-heart"></i> Favorite Games
+                        </button>
+                    </li>
+                    <li class="tab-item" role="presentation" onclick="switchTab('requests')">
+                        <button id="requests-tab" class="tab-link">
+                            <i class="fas fa-plus-circle"></i> Game Requests
+                        </button>
+                    </li>
+                </ul>
+
+
+
+
+                <div class="tab-content" id="profileTabsContent">
+                    <div id="reviews" class="tab-pane active">
+                        @if (Model.Reviews != null && Model.Reviews.Any())
+                        {
+                            @foreach (var review in Model.Reviews.OrderByDescending(r => r.CreatedAt))
+                            {
+                                <div class="review-item">
+                                    <div class="review-meta">
+                                        <span class="review-rating">
+                                            <i class="fas fa-star "></i> @review.Rating/10
+                                        </span>
+                                        <span>
+                                            <a asp-controller="Games" asp-action="Details" asp-route-id="@review.Game.Id" class="game-title-display">
+                                                @review.Game.Title
+                                            </a>
+                                        </span>
+                                        <span class="review-date">@review.CreatedAt.ToString("MMM dd, yyyy")</span>
+                                    </div>
+                                    <div class="review-content">
+                                        @review.Content
+                                        <div class="vote-controls">
+                                            <form>
+                                                <button type="button" class="vote-btn upvote" onclick="toggleUpvote(event, 'vote-count-@review.Id', '@review.Id')">
+                                                    <i class="fas fa-thumbs-up"></i>
+                                                </button>
+                                            </form>
+                                            <span class="vote-count" id="vote-count-@review.Id" data-state="0">@review.VoteNumber</span>
+                                            <form>
+                                                <button type="button" class="vote-btn downvote" onclick="toggleDownvote(event, 'vote-count-@review.Id', '@review.Id')">
+                                                    <i class="fas fa-thumbs-down"></i>
+                                                </button>
+                                            </form>
+                                            <a asp-controller="Reviews" asp-action="Details" asp-route-id="@review.Id" class="details-btn mx-5">
+                                                Open thread
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="no-reviews">
+                                <i class="fas fa-comment-slash"></i>
+                                <p>No reviews yet for this game. Be the first to share your thoughts!</p>
+                            </div>
+                        }
+                    </div>
+
+
+
+
+
+
+
+                    <div class="tab-pane" id="favorites" role="tabpanel" style="display: none;">
+                        @if (Model.FavoriteGames != null && Model.FavoriteGames.Any())
+                        {
+                            <div class="games-grid grid-view">
+                                @foreach (var favorite in Model.FavoriteGames)
+                                {
+                                    var game = favorite.Game;
+                                    <div class="game-card">
+                                        <div class="game-card-inner">
+                                            <div class="profile-game-image-container">
+                                                <img src="@(string.IsNullOrEmpty(game?.ImageUrl) ? "/images/game-placeholder.jpg" : game.ImageUrl)"
+                                                     alt="@game?.Title" class="profile-game-image" />
+                                                <div class="game-overlay">
+                                                    <a href="/Games/Details/@game?.Id" class="details-btn">Go to game</a>
+                                                </div>
+                                                <div class="game-badges">
+                                                    <span class="rating-badge">
+                                                        @game?.AverageRating.ToString("0.0") <i class="fas fa-star"></i>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="game-info">
+                                                <span class="game-title fs-5">@game?.Title</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="empty-state">
+                                <i class="fas fa-heart-broken empty-icon"></i>
+                                <p>No favorite games yet. Find games you love and add them to favorites!</p>
+                            </div>
+                        }
+                    </div>
+
+
+
+
+
+
+
+
+                    <div id="discussions" class="tab-pane">
+                        @if (Model.DiscussionPosts != null && Model.DiscussionPosts.Any())
+                        {
+                            foreach (var discussion in Model.DiscussionPosts.OrderByDescending(d => d.CreatedAt))
+                            {
+                                <div class="review-item">
+                                    <div class="review-meta">
+                                        <div class="review-author">
+                                            <div class="review-author-avatar">
+                                                @if (!string.IsNullOrEmpty(discussion.Author.ProfileImg))
+                                                {
+                                                    <img src="@discussion.Author.ProfileImg" alt="Profile Image" class="author-image" />
+                                                }
+                                                else
+                                                {
+                                                    @(discussion.Author.UserName.Length > 0
+                                                        ? discussion.Author.UserName[0].ToString().ToUpper()
+                                                        : "U")
+                                                }
+                                            </div>
+                                            <span class="user-title">
+                                                <a asp-controller="User"
+                                                   asp-action="PublicProfile"
+                                                   asp-route-userId="@discussion.AuthorId">
+                                                    @discussion.Author?.UserName
+                                                </a>
+                                            </span>
+                                        </div>
+
+                                        <div class="review-info">
+                                            <span class="review-date">@discussion.CreatedAt.ToString("MMM dd, yyyy")</span>
+                                        </div>
+                                    </div>
+                                    <div class="review-content">
+                                        @discussion.Content
+
+                                        <div class="vote-controls">
+                                            <form>
+                                                <button type="button" class="vote-btn upvote" onclick="toggleUpvote(event, 'vote-count-discussion-@discussion.Id', '@discussion.Id')">
+                                                    <i class="fas fa-thumbs-up"></i>
+                                                </button>
+                                            </form>
+                                            <span class="vote-count" id="vote-count-discussion-@discussion.Id" data-state="0">@discussion.VoteNumber</span>
+                                            <form>
+                                                <button type="button" class="vote-btn downvote" onclick="toggleDownvote(event, 'vote-count-discussion-@discussion.Id', '@discussion.Id')">
+                                                    <i class="fas fa-thumbs-down"></i>
+                                                </button>
+                                            </form>
+                                            <a asp-controller="Discussions" asp-action="Details" asp-route-id="@discussion.Id" class="details-btn">
+                                                Open thread
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="no-reviews">
+                                <i class="fas fa-comment-slash"></i>
+                                <p>No discussions yet for this game. Start the conversation!</p>
+                            </div>
+                        }
+                    </div>
+
+
+
+
+
+                    <div class="tab-pane" id="requests" role="tabpanel" style="display: none;">
+                        @if (Model.GameRequests == null || !Model.GameRequests.Any())
+                        {
+                            <div class="empty-state">
+                                <i class="fas fa-gamepad empty-icon"></i>
+                                <p>No game requests yet. Submit a game you'd love to see on the platform!</p>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="discussions-list">
+                                @foreach (var request in Model.GameRequests)
+                                {
+                                    <div class="discussion-card">
+                                        <div class="discussion-layout">
+                                            <img src="@request.ImageUrl" alt="@request.Title" class="discussion-thumbnail" />
+                                            <div class="discussion-content">
+                                                <div class="discussion-header">
+                                                    <h4 class="discussion-title">@request.Title</h4>
+                                                </div>
+                                                <div class="discussion-preview">
+                                                    <p>@(request.Description?.Length > 150 ? request.Description.Substring(0, 150) + "..." : request.Description)</p>
+                                                </div>
+
+                                                @if (request.GameCategories != null && request.GameCategories.Any())
+                                                {
+                                                    <div class="category-tags">
+                                                        @foreach (var cat in request.GameCategories)
+                                                        {
+                                                            <span class="badge badge-secondary">@cat.Category</span>
+                                                        }
+                                                    </div>
+                                                }
+
+                                                <div class="discussion-meta">
+                                                    <span class="discussion-date"><i class="far fa-calendar-alt"></i> @request.RequestedAt.ToString("MMM dd, yyyy")</span>
+                                                    @{
+                                                        string statusClass = request.Status.ToString().ToLower();
+                                                    }
+                                                    <span class="status-indicator status-@statusClass">
+                                                        <span class="status-circle"></span>
+                                                        @request.Status
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Load Font Awesome
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css';
+            document.head.appendChild(link);
+        });
+
+        function toggleEditMode() {
+            const displaySection = document.getElementById('profile-display');
+            const editForm = document.getElementById('profile-edit-form');
+            const editButton = document.getElementById('edit-profile-btn');
+
+            if (displaySection.style.display !== 'none') {
+                // Switch to edit mode
+                displaySection.style.display = 'none';
+                editForm.style.display = 'block';
+                editButton.innerHTML = '<i class="fas fa-times"></i> Cancel Editing';
+                editButton.classList.add('cancel-edit');
+            } else {
+                // Switch back to display mode
+                displaySection.style.display = 'block';
+                editForm.style.display = 'none';
+                editButton.innerHTML = '<i class="fas fa-edit"></i> Edit Profile';
+                editButton.classList.remove('cancel-edit');
+            }
+        }
+
+        function switchTab(tabId) {
+            // Hide all tab panes
+            document.querySelectorAll('.tab-pane').forEach(pane => {
+                pane.style.display = 'none';
+                pane.classList.remove('active');
+            });
+
+            // Show the selected tab pane
+            document.getElementById(tabId).style.display = 'block';
+            document.getElementById(tabId).classList.add('active');
+
+            // Update active tab
+            document.querySelectorAll('.tab-item').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            document.querySelector(`.tab-item button#${tabId}-tab`).parentElement.classList.add('active');
+        }
+    </script>
+}

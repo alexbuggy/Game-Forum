@@ -1,0 +1,314 @@
+﻿@model GameForum.Models.Review
+@{
+    ViewData["Title"] = "Review Thread";
+}
+<head>
+    <link rel="stylesheet" href="~/css/game_details.css" />
+    <link rel="stylesheet" href="~/css/review_thread.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    <style>
+        
+    </style>
+</head>
+
+<div class="review-thread-container">
+    <h1 class="review-thread-title">
+        <i class="fas fa-comment-dots"></i> Review Thread
+    </h1>
+
+    <div class="main-review">
+        <div class="review-author-container">
+            <div class="review-author-wrapper">
+                <div class="review-author-avatar">
+                    @if (!string.IsNullOrEmpty(Model.Author?.ProfileImg))
+                    {
+                        <img src="@Model.Author.ProfileImg" alt="Avatar" class="author-image" />
+                    }
+                    else
+                    {
+                        @(Model.Author?.UserName?[0].ToString().ToUpper() ?? "U")
+                    }
+                </div>
+            </div>
+
+            <div class="review-body-container">
+                <div class="main-review-meta">
+                    <div class="user-title">
+                        <a asp-controller="User" asp-action="PublicProfile" asp-route-userId="@Model.AuthorId">
+                            @Model.Author?.UserName
+                        </a>
+                    </div>
+                    <div class="main-rating-badge">
+                        <i class="fas fa-star"></i> @Model.Rating/10
+                    </div>
+                    <div class="review-date">
+                        @Model.CreatedAt.ToString("MMM dd, yyyy")
+                    </div>
+                </div>
+
+                <div class="main-review-content">
+                    <h2>@Model.Content</h2>
+                </div>
+
+                <div class="review-interactions">
+                    <div class="vote-controls">
+                        <form>
+                            <button type="button" class="vote-btn upvote" onclick="toggleUpvote(event, 'vote-count-discussion-@Model.Id', '@Model.Id')">
+                                <i class="fas fa-thumbs-up"></i>
+                            </button>
+                        </form>
+                        <span class="vote-count" id="vote-count-discussion-@Model.Id" data-state="0">@Model.VoteNumber</span>
+                        <form>
+                            <button type="button" class="vote-btn downvote" onclick="toggleDownvote(event, 'vote-count-discussion-@Model.Id', '@Model.Id')">
+                                <i class="fas fa-thumbs-down"></i>
+                            </button>
+                        </form>
+                    </div>
+                    <button class="reply-button" onclick="openReplyForm('main')">
+                        <i class="fas fa-reply"></i> Reply
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reply Form (Hidden by default) -->
+    <div id="replyForm-main" class="reply-form" style="display: none;">
+        <form method="post" asp-controller="Reviews" asp-action="AddReply">
+            <input type="hidden" name="ReviewId" value="@Model.Id" />
+            <input type="hidden" name="RootId" value="@Model.Id" />
+
+            <div class="form-group">
+                <label for="Content">Your Reply</label>
+                <textarea name="Content" id="Content" required rows="4" placeholder="Share your thoughts..."></textarea>
+            </div>
+            <div class="form-buttons">
+                <button type="submit" class="reply-button">
+                    <i class="fas fa-paper-plane"></i> Submit
+                </button>
+                <button type="button" class="cancel-button" onclick="closeReplyForm('main')">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Replies Section -->
+    <div class="replies-section">
+        <div class="replies-header">
+            <i class="fas fa-comments"></i>
+            <h2>Replies</h2>
+        </div>
+
+        @if (Model.Replies != null && Model.Replies.Any())
+        {
+            foreach (var reply in Model.Replies.OrderBy(r => r.CreatedAt))
+            {
+                <div class="reply-item" id="reply-@reply.Id">
+                    <div class="review-author-wrapper">
+                        <div class="review-author-avatar">
+                            @if (!string.IsNullOrEmpty(reply.Author?.ProfileImg))
+                            {
+                                <img src="@reply.Author.ProfileImg" alt="Avatar" class="author-image" />
+                            }
+                            else
+                            {
+                                @(reply.Author?.UserName?[0].ToString().ToUpper() ?? "U")
+                            }
+                        </div>
+                    </div>
+
+                    <div class="review-body-container">
+                        <div class="reply-meta">
+                            <div class="user-title">
+                                <a asp-controller="User" asp-action="PublicProfile" asp-route-userId="@reply.AuthorId">
+                                    @reply.Author?.UserName
+                                </a>
+                            </div>
+                            <div class="reply-date">
+                                @reply.CreatedAt.ToString("MMM dd, yyyy")
+                            </div>
+                        </div>
+                        <div class="reply-content">
+                            @reply.Content
+                        </div>
+                        <div class="review-interactions">
+                            <div class="vote-controls">
+                                <form>
+                                    <button type="button" class="vote-btn upvote" onclick="toggleUpvote(event, 'vote-count-@reply.Id', '@reply.Id')">
+                                        <i class="fas fa-thumbs-up"></i>
+                                    </button>
+                                </form>
+                                <span class="vote-count" id="vote-count-@reply.Id" data-state="0">@reply.VoteNumber</span>
+                                <form>
+                                    <button type="button" class="vote-btn downvote" onclick="toggleDownvote(event, 'vote-count-@reply.Id', '@reply.Id')">
+                                        <i class="fas fa-thumbs-down"></i>
+                                    </button>
+                                </form>
+                            </div>
+                            <button class="reply-button" onclick="openReplyForm('@reply.Id')">
+                                <i class="fas fa-reply"></i> Reply
+                            </button>
+                            @if (reply.Replies != null && reply.Replies.Any())
+                            {
+                                <button class="show-replies-button fw-bold" onclick="toggleNestedReplies('@reply.Id')">
+                                    <i class="fas fa-comments"></i> View Replies (<span class="replies-count">@reply.Replies.Count</span>)
+                                </button>
+                            }
+                        </div>
+
+                        <!-- Nested reply form -->
+                        <div id="replyForm-@reply.Id" class="nested-reply-form">
+                            <form method="post" asp-controller="Reviews" asp-action="AddReply">
+                                <input type="hidden" name="ReviewId" value="@Model.Id" />
+                                <input type="hidden" name="ParentReplyId" value="@reply.Id" />
+                                <input type="hidden" name="RootId" value="@Model.Id" />
+
+                                <div class="form-group">
+                                    <label for="Content-@reply.Id">Your Reply</label>
+                                    <textarea name="Content" id="Content-@reply.Id" required rows="3" placeholder="Share your thoughts..."></textarea>
+                                </div>
+                                <div class="form-buttons">
+                                    <button type="submit" class="reply-button">
+                                        <i class="fas fa-paper-plane"></i> Submit
+                                    </button>
+                                    <button type="button" class="cancel-button" onclick="closeReplyForm('@reply.Id')">
+                                        <i class="fas fa-times"></i> Cancel
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Nested replies container -->
+                        @if (reply.Replies != null && reply.Replies.Any())
+                        {
+                            <div id="nested-replies-@reply.Id" class="nested-replies">
+                                @foreach (var nestedReply in reply.Replies.OrderBy(r => r.CreatedAt))
+                                {
+                                    @await Html.PartialAsync("_NestedReplyPartial", nestedReply)
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="no-replies animate-in">
+                <i class="fas fa-comment-slash"></i>
+                <p>No replies yet. Be the first to respond!</p>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function openReplyForm(replyId) {
+            const replyFormId = `replyForm-${replyId}`;
+            const replyForm = document.getElementById(replyFormId);
+
+            // Hide any other open reply forms first
+            document.querySelectorAll('.reply-form, .nested-reply-form').forEach(form => {
+                if (form.id !== replyFormId) {
+                    form.style.display = 'none';
+                }
+            });
+
+            // Show this reply form
+            replyForm.style.display = 'block';
+            replyForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function closeReplyForm(replyId) {
+            const replyFormId = `replyForm-${replyId}`;
+            document.getElementById(replyFormId).style.display = 'none';
+        }
+
+        function toggleNestedReplies(replyId) {
+            const nestedRepliesContainer = document.getElementById(`nested-replies-${replyId}`);
+            const displayStyle = nestedRepliesContainer.style.display;
+
+            if (displayStyle === 'none' || displayStyle === '') {
+                nestedRepliesContainer.style.display = 'block';
+
+                // Update button text to indicate replies can be hidden
+                const button = document.querySelector(`button[onclick="toggleNestedReplies('${replyId}')"]`);
+                if (button) {
+                    button.innerHTML = '<i class="fas fa-comments"></i> Hide Replies (<span class="replies-count">' +
+                        button.querySelector('.replies-count').textContent + '</span>)';
+                }
+            } else {
+                nestedRepliesContainer.style.display = 'none';
+
+                // Update button text to indicate replies can be shown
+                const button = document.querySelector(`button[onclick="toggleNestedReplies('${replyId}')"]`);
+                if (button) {
+                    button.innerHTML = '<i class="fas fa-comments"></i> View Replies (<span class="replies-count">' +
+                        button.querySelector('.replies-count').textContent + '</span>)';
+                }
+            }
+        }
+
+                    function toggleUpvote(event, elementId, reviewId) {
+            event.preventDefault();
+
+            var voteElement = document.getElementById(elementId);
+            var currentUpvotes = parseInt(voteElement.innerText);
+            var state = voteElement.dataset.state || "0";
+
+            if (state === "0") {
+                voteElement.innerText = (currentUpvotes + 1).toString();
+                voteElement.dataset.state = "1";
+            } else if (state === "1") {
+                voteElement.innerText = (currentUpvotes - 1).toString();
+                voteElement.dataset.state = "0";
+            } else if (state === "-1") {
+                voteElement.innerText = (currentUpvotes + 2).toString();
+                voteElement.dataset.state = "1";
+            }
+
+            fetch('/Post/Vote', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    postId: parseInt(reviewId),
+                    voteType: 1 // 1 for upvote
+                })
+            });
+        }
+
+        function toggleDownvote(event, elementId, reviewId) {
+            event.preventDefault();
+
+            var voteElement = document.getElementById(elementId);
+            var currentUpvotes = parseInt(voteElement.innerText);
+            var state = voteElement.dataset.state || "0";
+
+            if (state === "0") {
+                voteElement.innerText = (currentUpvotes - 1).toString();
+                voteElement.dataset.state = "-1";
+            } else if (state === "-1") {
+                voteElement.innerText = (currentUpvotes + 1).toString();
+                voteElement.dataset.state = "0";
+            } else if (state === "1") {
+                voteElement.innerText = (currentUpvotes - 2).toString();
+                voteElement.dataset.state = "-1";
+            }
+
+            fetch('/Post/Vote', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    postId: parseInt(reviewId),
+                    voteType: -1
+                })
+            });
+        }
+    </script>
+}

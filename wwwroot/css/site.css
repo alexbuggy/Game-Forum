@@ -1,0 +1,204 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
+  color: var(--bs-secondary-color);
+  text-align: end;
+}
+
+.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
+  text-align: start;
+}
+
+
+:root {
+    --primary-color: #7b2cbf;
+    --primary-light: #9d4edd;
+    --secondary-color: #48bfe3;
+    --dark-color: #1a1a2e;
+    --light-color: #f8f9fa;
+    --success-color: #06d6a0;
+    --warning-color: #ffb703;
+    --danger-color: #ef476f;
+    --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    --transition: all 0.3s ease;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f0f2f5;
+}
+
+.layout-navbar {
+    background: linear-gradient(90deg, #9d4edd, #c77dff);
+    padding: 0.75rem 1rem;
+    border-bottom: 2px solid var(--secondary-color);
+    box-shadow: var(--card-shadow);
+    transition: var(--transition);
+    font-family: 'Poppins', sans-serif;
+}
+
+.layout-navbar-brand {
+    color: white;
+    font-weight: 700;
+    font-size: 1.5rem;
+    letter-spacing: 1px;
+    padding: 0.5rem 1rem;
+    margin-right: 2rem;
+    position: relative;
+    transition: var(--transition);
+    text-decoration: none;
+}
+
+    .layout-navbar-brand::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 10%;
+        width: 80%;
+        height: 3px;
+        background-color: var(--secondary-color);
+        transform: scaleX(0);
+        transition: var(--transition);
+    }
+
+    .layout-navbar-brand:hover::after {
+        transform: scaleX(1);
+    }
+
+.layout-nav-link {
+    color: white !important;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    margin: 0 0.3rem;
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+}
+
+    .layout-nav-link:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+    }
+
+/* Navbar items alignment */
+#navbarContent {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-nav {
+    display: flex;
+    align-items: center;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+}
+
+/* Profile Image */
+.layout-profile-img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--secondary-color);
+    transition: var(--transition);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+}
+
+    .layout-profile-img:hover {
+        transform: scale(1.1);
+    }
+
+/* Remove button styling for logout */
+.btn-link.layout-nav-link {
+    background: none;
+    border: none;
+    padding: 0.5rem 1rem;
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+/* Pulse animation for navbar brand icon */
+.layout-navbar-brand i {
+    color: white;
+    margin-right: 8px;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+#navbarContent .navbar-nav {
+    flex-direction: row !important;
+    align-items: center;
+}
+
+.navbar-nav .nav-item {
+    margin-right: 10px;
+}
+
+/* Make navbar responsive */
+@media (max-width: 768px) {
+    #navbarContent .navbar-nav {
+        flex-direction: column !important;
+        width: 100%;
+    }
+
+    .navbar-collapse {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: linear-gradient(90deg, #9d4edd, #c77dff);
+        padding: 1rem;
+        z-index: 1000;
+        box-shadow: var(--card-shadow);
+    }
+
+    .navbar-nav .nav-item {
+        margin-bottom: 10px;
+        margin-right: 0;
+        width: 100%;
+    }
+
+    .layout-nav-link {
+        width: 100%;
+        text-align: left;
+    }
+}

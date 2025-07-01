@@ -1,0 +1,117 @@
+﻿@inject GameForum.Services.Interfaces.IUserService _userService
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - GameForum</title>
+    <script type="importmap"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/GameForum.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+</head>
+<body>
+    <header>
+        @{
+            string profileImg = "https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg";
+            string userName = User.Identity?.Name;
+
+            if (User.Identity.IsAuthenticated)
+            {
+                var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                var userTask = _userService.GetUserByIdAsync(userId);
+                userTask.Wait(); // not ideal, but acceptable in a Razor view
+                var user = userTask.Result;
+
+                if (user != null)
+                {
+                    profileImg = !string.IsNullOrEmpty(user.ProfileImg) ? user.ProfileImg : profileImg;
+                    userName = user.UserName;
+                }
+            }
+        }
+        <nav class="layout-navbar">
+            <div class="container-fluid">
+                <div class="d-flex justify-content-between align-items-center w-100">
+                    <div class="d-flex align-items-center">
+                        <a class="layout-navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                            <i class="fas fa-gamepad"></i> GameForum
+                        </a>
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
+                                aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+
+                        <div class="collapse navbar-collapse" id="navbarContent">
+                            <ul class="navbar-nav me-auto mb-0">
+                                <li class="nav-item">
+                                    <a class="layout-nav-link" asp-controller="Games" asp-action="Index">
+                                        <i class="fas fa-search mx-1"></i> Browse
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="layout-nav-link" asp-controller="GameRequests" asp-action="Create">
+                                        <i class="fas fa-plus-circle mx-1"></i> Request A Game
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div>
+                        <ul class="navbar-nav d-flex flex-row">
+                            @if (User.Identity?.IsAuthenticated ?? false)
+                            {
+                                <li class="nav-item">
+                                    <a class="layout-nav-link" asp-controller="User" asp-action="Profile">
+                                        <img src="@profileImg" alt="Profile" class="layout-profile-img me-2" />
+                                        <span>@userName</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <form method="post" asp-area="Identity" asp-page="/Account/Logout" class="d-inline">
+                                        <button type="submit" class="layout-nav-link btn-link">
+                                            <i class="fas fa-sign-out-alt mx-1"></i> Logout
+                                        </button>
+                                    </form>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="nav-item">
+                                    <a class="layout-nav-link" asp-area="Identity" asp-page="/Account/Register">
+                                        <i class="fas fa-user-plus mx-1"></i> Register
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="layout-nav-link" asp-area="Identity" asp-page="/Account/Login">
+                                        <i class="fas fa-sign-in-alt mx-1"></i> Login
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    @* <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2025 - GameForum - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer> *@
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

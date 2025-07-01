@@ -1,0 +1,177 @@
+﻿@model GameForum.Models.ViewModels.HomePageViewModel
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<head>
+    <link rel="stylesheet" href="~/css/home.css">
+    <link rel="stylesheet" href="~/css/review_cards.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+
+
+</head>
+<div class="home-container">
+    <div class="section-wrapper">
+        <div class="header-section">
+            <h2 class="explorer-title gradient-text"><i class="fas fa-fire"></i> Trending Games</h2>
+            <p class="section-subtitle fw-bold">check out the hottest games right now</p>
+        </div>
+    </div>
+
+    <div class="home-grid  py-5">
+        @foreach (var game in Model.Top3Games)
+        {
+            <div class="game-card">
+                <div class="game-card-inner">
+                    <div class="game-image-container">
+                        <img src="@(string.IsNullOrEmpty(game.ImageUrl) ? "/images/game-placeholder.jpg" : game.ImageUrl)" alt="@game.Title" class="game-image" />
+                        <div class="game-overlay">
+                            <a class="details-btn" asp-controller="Games" asp-action="Details" asp-route-id="@game.Id">
+                                Go to game
+                            </a>
+                        </div>
+
+                        <div class="game-badges">
+                            <span class="rating-badge">
+                                @game.AverageRating.ToString("0.0") <i class="fas fa-star"></i>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="game-info">
+                        <h3 class="game-title">@game.Title</h3>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="section-divider"></div>
+
+    <div class="section-wrapper">
+        <div class="header-section left">
+            <h2 class="explorer-title gradient-text fs-3"><i class="fas fa-star"></i> Top Community Reviews</h2>
+            <p class="section-subtitle fw-bold">what people are saying this week</p>
+        </div>
+    </div>
+    <div class="games-container">
+        @foreach (var review in Model.Top3Reviews)
+        {
+            <div class="review-card">
+                <div class="review-image-container">
+                    <a href="/Games/Details/@review.Game.Id">
+                        <img src="@(string.IsNullOrEmpty(review.Game.ImageUrl) ? "/images/game-placeholder.jpg" : review.Game.ImageUrl)" alt="@review.Game.Title" class="game-image" />
+                    </a>
+                </div>
+                <div class="review-info">
+                    <h3 class="game-title">
+                        <a href="/Games/Details/@review.Game.Id">@review.Game.Title</a>
+                    </h3>
+
+                    <div class="rating-display">
+                        <i class="fas fa-star"></i> @review.Rating
+                    </div>
+
+                    <div class="game-meta">
+                        <span class="review-count">
+                             <i class="fas fa-user"></i>
+                            <span class="user-title">
+                                <a asp-controller="User"
+                                   asp-action="PublicProfile"
+                                   asp-route-userId="@review.AuthorId">
+                                    @review.Author.UserName
+                                </a>
+                            </span>
+                        </span>
+                        <span class="review-count">
+                            <i class="fas fa-clock"></i> @review.CreatedAt.ToString("yyyy-MM-dd")
+                        </span>
+                    </div>
+
+                    <p class="game-description my-4">
+                        @review.Content
+                    </p>
+
+                    <div class="vote-controls">
+                        <form>
+                            <button type="button" class="vote-btn upvote" onclick="toggleUpvote(event, 'vote-count-@review.Id', '@review.Id')">
+                                <i class="fas fa-thumbs-up"></i>
+                            </button>
+                        </form>
+                        <span class="vote-count" id="vote-count-@review.Id" data-state="0">@review.VoteNumber</span>
+                        <form>
+                            <button type="button" class="vote-btn downvote" onclick="toggleDownvote(event, 'vote-count-@review.Id', '@review.Id')">
+                                <i class="fas fa-thumbs-down"></i>
+                            </button>
+                        </form>
+                        <a asp-controller="Reviews" asp-action="Details" asp-route-id="@review.Id" class="details-btn mx-5">
+                            Open thread
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+@section scripts{
+    <script>
+            function toggleUpvote(event, elementId, reviewId) {
+                event.preventDefault();
+
+                var voteElement = document.getElementById(elementId);
+                var currentUpvotes = parseInt(voteElement.innerText);
+                var state = voteElement.dataset.state || "0";
+
+                if (state === "0") {
+                    voteElement.innerText = (currentUpvotes + 1).toString();
+                    voteElement.dataset.state = "1";
+                } else if (state === "1") {
+                    voteElement.innerText = (currentUpvotes - 1).toString();
+                    voteElement.dataset.state = "0";
+                } else if (state === "-1") {
+                    voteElement.innerText = (currentUpvotes + 2).toString();
+                    voteElement.dataset.state = "1";
+                }
+
+                fetch('/Post/Vote', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        postId: parseInt(reviewId),
+                        voteType: 1 // 1 for upvote
+                    })
+                });
+            }
+
+            function toggleDownvote(event, elementId, reviewId) {
+                event.preventDefault();
+
+                var voteElement = document.getElementById(elementId);
+                var currentUpvotes = parseInt(voteElement.innerText);
+                var state = voteElement.dataset.state || "0";
+
+                if (state === "0") {
+                    voteElement.innerText = (currentUpvotes - 1).toString();
+                    voteElement.dataset.state = "-1";
+                } else if (state === "-1") {
+                    voteElement.innerText = (currentUpvotes + 1).toString();
+                    voteElement.dataset.state = "0";
+                } else if (state === "1") {
+                    voteElement.innerText = (currentUpvotes - 2).toString();
+                    voteElement.dataset.state = "-1";
+                }
+
+                fetch('/Post/Vote', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        postId: parseInt(reviewId),
+                        voteType: -1
+                    })
+                });
+            }
+    </script>
+}

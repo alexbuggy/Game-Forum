@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35506.116
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameForum", "GameForum.csproj", "{E973017D-7245-4A38-9028-F173EE30B899}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameForum.UnitTests", "..\GameForum.UnitTests\GameForum.UnitTests.csproj", "{F1402265-85B9-42E0-B5D0-6845F16E5E11}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E973017D-7245-4A38-9028-F173EE30B899}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E973017D-7245-4A38-9028-F173EE30B899}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E973017D-7245-4A38-9028-F173EE30B899}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E973017D-7245-4A38-9028-F173EE30B899}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1402265-85B9-42E0-B5D0-6845F16E5E11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1402265-85B9-42E0-B5D0-6845F16E5E11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1402265-85B9-42E0-B5D0-6845F16E5E11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1402265-85B9-42E0-B5D0-6845F16E5E11}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D155B2B8-EA23-4369-9844-DA47568604A8}
+	EndGlobalSection
+EndGlobal

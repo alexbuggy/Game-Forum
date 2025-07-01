@@ -1,0 +1,37 @@
+﻿namespace GameForum.Models.Enums
+{
+    public enum GameCategory
+    {
+        Action,
+        Adventure,
+        RolePlaying,
+        Strategy,
+        Simulation,
+        Sports,
+        Racing,
+        Fighting,
+        Shooter,
+        BattleRoyale,
+        Survival,
+        Horror,
+        Puzzle,
+        Platformer,
+        MOBA,
+        MMORPG,
+        OpenWorld,
+        Sandbox,
+        Roguelike,
+        Idle,
+        Casual,
+        Educational,
+        Rhythm,
+        Stealth,
+        TowerDefense,
+        CardGame,
+        BoardGame,
+        Trivia,
+        VisualNovel,
+        Metroidvania,
+        Soulslike
+    }
+}

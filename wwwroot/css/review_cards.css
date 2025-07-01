@@ -1,0 +1,143 @@
+﻿.review-card {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    margin-bottom: 1.5rem;
+}
+
+    .review-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    }
+
+.review-image-container {
+    flex: 0 0 220px;
+    height: auto;
+    overflow: hidden;
+    background-color: #f0f0f0;
+}
+
+    .review-image-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+.review-info {
+    flex: 1;
+    padding: 1.5rem;
+}
+
+    .review-info .game-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: #1a1a2e;
+    }
+
+        .review-info .game-title a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+            .review-info .game-title a:hover {
+                color: #7b2cbf;
+            }
+
+    .review-info .game-description {
+        font-size: 0.9rem;
+        color: #444;
+        line-height: 1.5;
+        margin-top: 1rem; 
+        margin-bottom: 1rem;
+    }
+
+    .review-info .rating-display {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #ffb703;
+        margin: 0.25rem 0 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .review-info .game-meta {
+        display: flex;
+        gap: 1.5rem;
+        font-size: 0.85rem;
+        color: #6c757d;
+        align-items: center;
+    }
+
+.review-count i {
+    margin-right: 5px;
+    color: #ffb703;
+}
+
+.vote-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+
+
+.vote-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: #6c757d;
+    transition: color 0.3s ease;
+}
+
+    .vote-btn:hover {
+        color: var(--primary-color);
+    }
+
+    .vote-btn.upvote:hover {
+        color: var(--success-color);
+    }
+
+    .vote-btn.downvote:hover {
+        color: var(--danger-color);
+    }
+
+.vote-count {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--dark-color);
+}
+
+
+.replies-link a {
+    margin-top: 1rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-decoration: none;
+    color: #1a1a2e;
+    transition: color 0.3s ease;
+}
+
+    .replies-link a:hover {
+        color: #7b2cbf; 
+    }
+
+.user-title a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+    .user-title a:hover {
+        color: #5a1a8b;
+        text-decoration: none;
+    }

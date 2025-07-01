@@ -1,0 +1,89 @@
+﻿@model GameForum.Models.Reply
+<div class="nested-reply-item" id="reply-@Model.Id">
+    <div class="review-author-container">
+        <div class="review-author-wrapper">
+            <div class="review-author-avatar">
+                @if (!string.IsNullOrEmpty(Model.Author?.ProfileImg))
+                {
+                    <img src="@Model.Author.ProfileImg" alt="Avatar" class="author-image" />
+                }
+                else
+                {
+                    @(Model.Author?.UserName?[0].ToString().ToUpper() ?? "U")
+                }
+            </div>
+        </div>
+        <div class="review-body-container">
+            <div class="reply-meta">
+                <div class="user-title">
+                    <a asp-controller="User" asp-action="PublicProfile" asp-route-userId="@Model.AuthorId">
+                        @Model.Author?.UserName
+                    </a>
+                </div>
+                <div class="reply-date">
+                    @Model.CreatedAt.ToString("MMM dd, yyyy")
+                </div>
+            </div>
+            <div class="reply-content">
+                @Model.Content
+            </div>
+            <div class="review-interactions">
+                <div class="vote-controls">
+                    <form>
+                        <button type="button" class="vote-btn upvote" onclick="toggleUpvote(event, 'vote-count-@Model.Id', '@Model.Id')">
+                            <i class="fas fa-thumbs-up"></i>
+                        </button>
+                    </form>
+                    <span class="vote-count" id="vote-count-@Model.Id" data-state="0">@Model.VoteNumber</span>
+                    <form>
+                        <button type="button" class="vote-btn downvote" onclick="toggleDownvote(event, 'vote-count-@Model.Id', '@Model.Id')">
+                            <i class="fas fa-thumbs-down"></i>
+                        </button>
+                    </form>
+                </div>
+                <button class="reply-button" onclick="openReplyForm('@Model.Id')">
+                    <i class="fas fa-reply"></i> Reply
+                </button>
+                @if (Model.Replies != null && Model.Replies.Any())
+                {
+                    <button class="show-replies-button fw-bold" onclick="toggleNestedReplies('@Model.Id')">
+                        <i class="fas fa-comments"></i> View Replies (<span class="replies-count">@Model.Replies.Count</span>)
+                    </button>
+                }
+            </div>
+            <!-- Nested reply form for this reply -->
+            <div id="replyForm-@Model.Id" class="nested-reply-form">
+                <form method="post" asp-controller="Reviews" asp-action="AddReply">
+                    <input type="hidden" name="ReviewId" value="@Model.ParentPostId" />
+                    <input type="hidden" name="ParentReplyId" value="@Model.Id" />
+                    <input type="hidden" name="RootId" value="@Model.RootId" />
+
+                    <div class="form-group">
+                        <label for="Content-@Model.Id">Your Reply</label>
+                        <textarea name="Content" id="Content-@Model.Id" required rows="3" placeholder="Share your thoughts..."></textarea>
+                    </div>
+                    <div class="form-buttons">
+                        <button type="submit" class="reply-button">
+                            <i class="fas fa-paper-plane"></i> Submit
+                        </button>
+                        <button type="button" class="cancel-button" onclick="closeReplyForm('@Model.Id')">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <!-- Recursively render deeper nested replies -->
+            @if (Model.Replies != null && Model.Replies.Any())
+            {
+                <div id="nested-replies-@Model.Id" class="nested-replies">
+                    @foreach (var nestedReply in Model.Replies.OrderBy(r => r.CreatedAt))
+                    {
+                        @await Html.PartialAsync("_NestedReplyPartial", nestedReply)
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+            
