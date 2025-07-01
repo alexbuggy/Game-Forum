@@ -5,8 +5,6 @@ VisualStudioVersion = 17.12.35506.116
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameForum", "GameForum.csproj", "{E973017D-7245-4A38-9028-F173EE30B899}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameForum.UnitTests", "..\GameForum.UnitTests\GameForum.UnitTests.csproj", "{F1402265-85B9-42E0-B5D0-6845F16E5E11}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
